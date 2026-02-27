@@ -1,8 +1,13 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Send, Github, Linkedin, Twitter, Mail, Copy, Check, Clock, MapPin } from "lucide-react";
+import { Send, Github, Linkedin, Twitter, Mail, Copy, Check, Clock, MapPin, UserRound, AtSign, Crosshair, MessageSquare, Loader2 } from "lucide-react";
+import emailjs from "@emailjs/browser";
 import { contactInfo } from "@/data/portfolio";
 import { toast } from "sonner";
+
+const EMAILJS_SERVICE_ID  = import.meta.env.VITE_EMAILJS_SERVICE_ID  as string;
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string;
+const EMAILJS_PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY  as string;
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({
@@ -12,11 +17,38 @@ export default function ContactSection() {
     message: ""
   });
   const [copiedEmail, setCopiedEmail] = useState(false);
+  const [sending, setSending] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Message sent! I'll get back to you soon 🎉");
-    setFormData({ name: "", email: "", projectType: "", message: "" });
+
+    if (!EMAILJS_SERVICE_ID || EMAILJS_SERVICE_ID === "YOUR_SERVICE_ID") {
+      toast.error("Email service not configured. Check .env keys.");
+      return;
+    }
+
+    setSending(true);
+    try {
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          to_name:      "Anuj",
+          from_name:    formData.name,
+          from_email:   formData.email,
+          project_type: formData.projectType,
+          message:      formData.message,
+          reply_to:     formData.email,
+        },
+        EMAILJS_PUBLIC_KEY
+      );
+      toast.success("Message sent! I'll get back to you soon.");
+      setFormData({ name: "", email: "", projectType: "", message: "" });
+    } catch {
+      toast.error("Failed to send. Please email me directly at " + contactInfo.email);
+    } finally {
+      setSending(false);
+    }
   };
 
   const handleCopyEmail = () => {
@@ -50,8 +82,8 @@ export default function ContactSection() {
           <div className="grid sm:grid-cols-2 gap-6">
             {/* Name */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
-                👤 Your Name
+              <label htmlFor="name" className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-2">
+                <UserRound className="h-3.5 w-3.5 text-muted-foreground" /> Your Name
               </label>
               <input
                 type="text"
@@ -66,8 +98,8 @@ export default function ContactSection() {
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
-                📧 Email Address
+              <label htmlFor="email" className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-2">
+                <AtSign className="h-3.5 w-3.5 text-muted-foreground" /> Email Address
               </label>
               <input
                 type="email"
@@ -83,8 +115,8 @@ export default function ContactSection() {
 
           {/* Project Type */}
           <div>
-            <label htmlFor="projectType" className="block text-sm font-medium text-foreground mb-2">
-              🎯 Project Type
+            <label htmlFor="projectType" className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-2">
+              <Crosshair className="h-3.5 w-3.5 text-muted-foreground" /> Project Type
             </label>
             <select
               id="projectType"
@@ -104,8 +136,8 @@ export default function ContactSection() {
 
           {/* Message */}
           <div>
-            <label htmlFor="message" className="block text-sm font-medium text-foreground mb-2">
-              💬 Tell me about your project
+            <label htmlFor="message" className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-2">
+              <MessageSquare className="h-3.5 w-3.5 text-muted-foreground" /> Tell me about your project
             </label>
             <textarea
               id="message"
@@ -133,12 +165,22 @@ export default function ContactSection() {
           {/* Submit Button */}
           <motion.button
             type="submit"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="w-full sm:w-auto px-8 py-3 rounded-full bg-primary text-primary-foreground font-semibold flex items-center justify-center gap-2 hover:brightness-110 transition-all glow-green-sm"
+            disabled={sending}
+            whileHover={sending ? {} : { scale: 1.02 }}
+            whileTap={sending ? {} : { scale: 0.98 }}
+            className="w-full sm:w-auto px-8 py-3 rounded-full bg-primary text-primary-foreground font-semibold flex items-center justify-center gap-2 hover:brightness-110 transition-all glow-green-sm disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            <Send className="h-4 w-4" />
-            Send Demo
+            {sending ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Sending…
+              </>
+            ) : (
+              <>
+                <Send className="h-4 w-4" />
+                Send Message
+              </>
+            )}
           </motion.button>
         </form>
       </div>

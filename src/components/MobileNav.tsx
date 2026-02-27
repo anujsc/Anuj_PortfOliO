@@ -1,39 +1,40 @@
-import { Home, User, Briefcase, Mail } from "lucide-react";
+import { Link } from "react-router-dom";
+import { LayoutGrid, UserRound, GraduationCap, AtSign } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface MobileNavProps {
   activeSection: string;
-  onSectionChange: (section: string) => void;
+  sectionToPath: Record<string, string>;
 }
 
-export default function MobileNav({ activeSection, onSectionChange }: MobileNavProps) {
+export default function MobileNav({ activeSection, sectionToPath }: MobileNavProps) {
   const navItems = [
-    { id: "home", icon: Home, label: "Home" },
-    { id: "about", icon: User, label: "About" },
-    { id: "experience", icon: Briefcase, label: "Experience" },
-    { id: "contact", icon: Mail, label: "Contact" }
+    { id: "home", icon: LayoutGrid, label: "Home" },
+    { id: "about", icon: UserRound, label: "About" },
+    { id: "experience", icon: GraduationCap, label: "Experience" },
+    { id: "contact", icon: AtSign, label: "Contact" },
   ];
 
   return (
-    <nav className="lg:hidden fixed bottom-[72px] left-0 right-0 bg-card/95 backdrop-blur-xl border-t border-border z-40">
-      <div className="flex items-center justify-around px-2 py-2">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-card/95 backdrop-blur-xl border-t border-border z-50">
+      <div className="flex items-center justify-around px-2 py-2 h-full">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeSection === item.id;
-          
+
           return (
-            <button
+            <Link
               key={item.id}
-              onClick={() => onSectionChange(item.id)}
+              to={sectionToPath[item.id] ?? "/"}
               className="relative flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors"
               aria-label={item.label}
             >
-              <Icon 
+              <Icon
                 className={`h-5 w-5 transition-colors ${
                   isActive ? "text-primary" : "text-muted-foreground"
                 }`}
               />
-              <span 
+              <span
                 className={`text-[10px] font-medium transition-colors ${
                   isActive ? "text-primary" : "text-muted-foreground"
                 }`}
@@ -47,10 +48,11 @@ export default function MobileNav({ activeSection, onSectionChange }: MobileNavP
                   transition={{ type: "spring", stiffness: 380, damping: 30 }}
                 />
               )}
-            </button>
+            </Link>
           );
         })}
       </div>
     </nav>
   );
 }
+

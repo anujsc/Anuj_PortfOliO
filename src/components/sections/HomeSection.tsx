@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import ProjectCard from "@/components/ProjectCard";
 import { projects } from "@/data/portfolio";
 import type { Project } from "@/data/portfolio";
@@ -12,6 +13,8 @@ interface HomeSectionProps {
 
 export default function HomeSection({ searchQuery, onSelectProject, greeting }: HomeSectionProps) {
   const [activeFilter, setActiveFilter] = useState<string>("all");
+  const navigate = useNavigate();
+  const brickProjects = projects.slice(0, 8);
 
   const filteredProjects = useMemo(() => {
     let filtered = projects;
@@ -41,8 +44,8 @@ export default function HomeSection({ searchQuery, onSelectProject, greeting }: 
     { label: "All", value: "all" },
     { label: "AI", value: "ai" },
     { label: "Web", value: "web" },
-    { label: "Mobile", value: "mobile" },
-    { label: "Data", value: "data" }
+    { label: "Frontend/UI", value: "frontend" },
+ 
   ];
 
   return (
@@ -56,6 +59,31 @@ export default function HomeSection({ searchQuery, onSelectProject, greeting }: 
       <h1 className="text-3xl lg:text-4xl font-heading font-bold text-foreground mb-6">
         {greeting}
       </h1>
+
+      {/* ── MOBILE ONLY: Spotify-style 2-col brick grid ── */}
+      {!searchQuery && (
+        <div className="sm:hidden mb-6">
+          <div className="grid grid-cols-2 gap-2">
+            {brickProjects.map((project) => (
+              <button
+                key={project.id}
+                onClick={() => navigate(`/projects/${project.id}`)}
+                className="flex items-center gap-0 rounded-md bg-white/8 hover:bg-white/12 active:scale-95 transition-all overflow-hidden h-14 text-left"
+                aria-label={project.title}
+              >
+                <img
+                  src={project.thumbnail}
+                  alt={project.title}
+                  className="w-14 h-14 object-cover shrink-0"
+                />
+                <span className="px-3 text-xs font-semibold text-foreground leading-tight line-clamp-2">
+                  {project.title}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Filter Bar */}
       <div className="flex flex-wrap gap-2 mb-8">
@@ -113,7 +141,7 @@ export default function HomeSection({ searchQuery, onSelectProject, greeting }: 
               className="h-32 rounded-xl bg-gradient-to-br from-primary/30 to-primary/5 flex items-end p-4 font-heading font-semibold text-foreground hover:scale-[1.02] transition-transform text-left"
             >
               <div>
-                <div className="text-2xl mb-1">🤖</div>
+                <div className="text-2xl mb-1"> </div>
                 AI Projects
               </div>
             </button>
@@ -122,7 +150,7 @@ export default function HomeSection({ searchQuery, onSelectProject, greeting }: 
               className="h-32 rounded-xl bg-gradient-to-br from-blue-500/30 to-blue-500/5 flex items-end p-4 font-heading font-semibold text-foreground hover:scale-[1.02] transition-transform text-left"
             >
               <div>
-                <div className="text-2xl mb-1">🌐</div>
+                <div className="text-2xl mb-1"></div>
                 Web Apps
               </div>
             </button>
@@ -131,8 +159,8 @@ export default function HomeSection({ searchQuery, onSelectProject, greeting }: 
               className="h-32 rounded-xl bg-gradient-to-br from-accent/30 to-accent/5 flex items-end p-4 font-heading font-semibold text-foreground hover:scale-[1.02] transition-transform text-left"
             >
               <div>
-                <div className="text-2xl mb-1">📊</div>
-                Data & Analytics
+                <div className="text-2xl mb-1"></div>
+                Frontend/Ui-Ux
               </div>
             </button>
           </div>

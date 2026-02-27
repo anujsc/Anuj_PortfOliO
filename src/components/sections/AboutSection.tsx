@@ -1,6 +1,48 @@
 import { motion } from "framer-motion";
-import { Calendar, MapPin, Award, Heart } from "lucide-react";
+import {
+  Calendar,
+  MapPin,
+  Award,
+  Heart,
+  Bot,
+  Monitor,
+  GitBranch,
+  BookOpen,
+  Rocket,
+  Cpu,
+  Link2,
+  FileCode2,
+  Atom,
+  Zap,
+  Server,
+  Hash,
+  TrendingUp,
+  Globe,
+  MessageCircle,
+  Sparkles,
+} from "lucide-react";
 import { aboutMe } from "@/data/portfolio";
+
+const interestIconMap: Record<string, React.FC<{ className?: string }>> = {
+  "AI/ML": Bot,
+  "Full-Stack Dev": Monitor,
+  "Open Source": GitBranch,
+  "Learning": BookOpen,
+};
+
+const factIconMap: Record<string, React.FC<{ className?: string }>> = {
+  "Projects Built": Rocket,
+  "Tech Stack": Cpu,
+  "APIs Integrated": Link2,
+  "Code Reviews": FileCode2,
+};
+
+const techIconMap: Record<string, React.FC<{ className?: string }>> = {
+  "React": Atom,
+  "Angular": Zap,
+  "Node.js": Server,
+  "TypeScript": Hash,
+};
 
 export default function AboutSection() {
   return (
@@ -59,16 +101,21 @@ export default function AboutSection() {
               Beyond the Code
             </h2>
             <div className="grid sm:grid-cols-2 gap-4">
-              {aboutMe.interests.map((interest, i) => (
-                <div
-                  key={i}
-                  className="bg-card rounded-lg p-4 hover:bg-card-hover transition-colors"
-                >
-                  <div className="text-3xl mb-2">{interest.icon}</div>
-                  <h3 className="font-semibold text-foreground mb-1">{interest.name}</h3>
-                  <p className="text-sm text-muted-foreground">{interest.description}</p>
-                </div>
-              ))}
+              {aboutMe.interests.map((interest, i) => {
+                const IIcon = interestIconMap[interest.name] ?? Sparkles;
+                return (
+                  <div
+                    key={i}
+                    className="bg-card rounded-xl p-4 hover:bg-card-hover transition-colors ring-1 ring-white/5"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
+                      <IIcon className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="font-semibold text-foreground mb-1">{interest.name}</h3>
+                    <p className="text-sm text-muted-foreground">{interest.description}</p>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -78,15 +125,18 @@ export default function AboutSection() {
               By the Numbers
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {aboutMe.funFacts.map((fact, i) => (
-                <div key={i} className="bg-card rounded-lg p-4 text-center">
-                  <div className="text-2xl mb-2">{fact.icon}</div>
-                  <p className="text-2xl font-heading font-bold text-primary mb-1">
-                    {fact.value}
-                  </p>
-                  <p className="text-xs text-muted-foreground">{fact.label}</p>
-                </div>
-              ))}
+              {aboutMe.funFacts.map((fact, i) => {
+                const FIcon = factIconMap[fact.label] ?? Sparkles;
+                return (
+                  <div key={i} className="bg-card rounded-xl p-4 text-center ring-1 ring-white/5">
+                    <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-2">
+                      <FIcon className="h-4 w-4 text-primary" />
+                    </div>
+                    <p className="text-2xl font-heading font-bold text-primary mb-1">{fact.value}</p>
+                    <p className="text-xs text-muted-foreground">{fact.label}</p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -128,15 +178,20 @@ export default function AboutSection() {
               Influenced By
             </h3>
             <div className="space-y-3">
-              {aboutMe.influencedBy.map((item, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <span className="text-2xl">{item.icon}</span>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">{item.name}</p>
-                    <p className="text-xs text-muted-foreground">{item.type}</p>
+              {aboutMe.influencedBy.map((item, i) => {
+                const TIcon = techIconMap[item.name] ?? Sparkles;
+                return (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-white/5 border border-white/8 flex items-center justify-center shrink-0">
+                      <TIcon className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{item.name}</p>
+                      <p className="text-xs text-muted-foreground">{item.type}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -145,11 +200,23 @@ export default function AboutSection() {
             <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-3">
               Quick Facts
             </h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>🎂 Based in {aboutMe.timeline[0]?.year || "2021"}</li>
-              <li>💼 {aboutMe.timeline.length} major milestones</li>
-              <li>🌍 {aboutMe.interests.length} hobbies outside tech</li>
-              <li>🗣️ Speaks {aboutMe.languages.length} languages</li>
+            <ul className="space-y-2.5 text-sm text-muted-foreground">
+              <li className="flex items-center gap-2.5">
+                <Calendar className="h-4 w-4 text-primary shrink-0" />
+                Based in {aboutMe.timeline[0]?.year || "2021"}
+              </li>
+              <li className="flex items-center gap-2.5">
+                <TrendingUp className="h-4 w-4 text-primary shrink-0" />
+                {aboutMe.timeline.length} major milestones
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Globe className="h-4 w-4 text-primary shrink-0" />
+                {aboutMe.interests.length} hobbies outside tech
+              </li>
+              <li className="flex items-center gap-2.5">
+                <MessageCircle className="h-4 w-4 text-primary shrink-0" />
+                Speaks {aboutMe.languages.length} languages
+              </li>
             </ul>
           </div>
         </div>
