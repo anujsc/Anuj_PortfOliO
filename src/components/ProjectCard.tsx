@@ -10,7 +10,11 @@ interface ProjectCardProps {
   onSelect?: (project: Project) => void;
 }
 
-export default function ProjectCard({ project, index, onSelect }: ProjectCardProps) {
+export default function ProjectCard({
+  project,
+  index,
+  onSelect,
+}: ProjectCardProps) {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -31,46 +35,40 @@ export default function ProjectCard({ project, index, onSelect }: ProjectCardPro
       onKeyDown={(e) => e.key === "Enter" && handleClick()}
     >
       {/* Thumbnail / Carousel */}
-      {project.images && project.images.length > 1 ? (
-        <ProjectCarousel
-          images={project.images}
-          alt={project.title}
-          aspectClass="aspect-video"
-          intervalMs={5000}
-          overlay={
-            <>
-              <div className="absolute inset-0 bg-gradient-to-t from-card/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                className="absolute bottom-3 right-3 z-20 w-11 h-11 rounded-full bg-primary flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 shadow-xl glow-green"
-              >
-                <Play className="h-4 w-4 text-primary-foreground ml-0.5" fill="currentColor" />
-              </motion.div>
-            </>
-          }
-        />
-      ) : (
-        <div className="relative aspect-video overflow-hidden">
-          <img
-            src={project.thumbnail}
-            alt={project.title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-            loading="lazy"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-card/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          <motion.div
-            whileHover={{ scale: 1.1 }}
-            className="absolute bottom-3 right-3 w-11 h-11 rounded-full bg-primary flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 shadow-xl glow-green"
-          >
-            <Play className="h-4 w-4 text-primary-foreground ml-0.5" fill="currentColor" />
-          </motion.div>
-        </div>
-      )}
+      <ProjectCarousel
+        images={
+          project.images && project.images.length > 0
+            ? project.images
+            : [project.thumbnail]
+        }
+        alt={project.title}
+        aspectClass="aspect-video"
+        intervalMs={5000}
+        autoPlay={project.images && project.images.length > 1}
+        overlay={
+          <>
+            <div className="absolute inset-0 bg-gradient-to-t from-card/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              className="absolute bottom-3 right-3 z-20 w-11 h-11 rounded-full bg-primary flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 shadow-xl glow-green"
+            >
+              <Play
+                className="h-4 w-4 text-primary-foreground ml-0.5"
+                fill="currentColor"
+              />
+            </motion.div>
+          </>
+        }
+      />
 
       {/* Info */}
       <div className="p-4">
-        <h3 className="font-heading font-semibold text-foreground mb-1 truncate">{project.title}</h3>
-        <p className="text-sm text-muted-foreground line-clamp-1 mb-3">{project.description}</p>
+        <h3 className="font-heading font-semibold text-foreground mb-1 truncate">
+          {project.title}
+        </h3>
+        <p className="text-sm text-muted-foreground line-clamp-1 mb-3">
+          {project.description}
+        </p>
 
         {/* Tags row */}
         <div className="flex flex-wrap gap-1.5">
@@ -115,10 +113,11 @@ export default function ProjectCard({ project, index, onSelect }: ProjectCardPro
               Source
             </a>
           )}
-          <span className="ml-auto text-[10px] text-muted-foreground/60">{project.duration}</span>
+          <span className="ml-auto text-[10px] text-muted-foreground/60">
+            {project.duration}
+          </span>
         </div>
       </div>
     </motion.article>
   );
 }
-

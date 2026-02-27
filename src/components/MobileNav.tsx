@@ -1,5 +1,11 @@
 import { Link } from "react-router-dom";
-import { LayoutGrid, UserRound, GraduationCap, AtSign } from "lucide-react";
+import {
+  LayoutGrid,
+  UserRound,
+  GraduationCap,
+  AtSign,
+  Music,
+} from "lucide-react";
 import { motion } from "framer-motion";
 
 interface MobileNavProps {
@@ -7,11 +13,15 @@ interface MobileNavProps {
   sectionToPath: Record<string, string>;
 }
 
-export default function MobileNav({ activeSection, sectionToPath }: MobileNavProps) {
+export default function MobileNav({
+  activeSection,
+  sectionToPath,
+}: MobileNavProps) {
   const navItems = [
     { id: "home", icon: LayoutGrid, label: "Home" },
     { id: "about", icon: UserRound, label: "About" },
     { id: "experience", icon: GraduationCap, label: "Experience" },
+    { id: "spotify", icon: Music, label: "Spotify" },
     { id: "contact", icon: AtSign, label: "Contact" },
   ];
 
@@ -55,4 +65,3 @@ export default function MobileNav({ activeSection, sectionToPath }: MobileNavPro
     </nav>
   );
 }
-

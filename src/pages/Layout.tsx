@@ -13,6 +13,7 @@ const pathToSection: Record<string, string> = {
   "/": "home",
   "/about": "about",
   "/experience": "experience",
+  "/spotify": "spotify",
   "/contact": "contact",
 };
 
@@ -20,10 +21,11 @@ const sectionToPath: Record<string, string> = {
   home: "/",
   about: "/about",
   experience: "/experience",
+  spotify: "/spotify",
   contact: "/contact",
 };
 
-const sectionOrder = ["/", "/about", "/experience", "/contact"];
+const sectionOrder = ["/", "/about", "/experience", "/spotify", "/contact"];
 
 export interface OutletContext {
   searchQuery: string;
@@ -34,15 +36,20 @@ export default function Layout() {
   const navigate = useNavigate();
   const scrollProgress = useScrollProgress();
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentPlayerProject, setCurrentPlayerProject] = useState<Project | null>(projects[0]);
+  const [currentPlayerProject, setCurrentPlayerProject] =
+    useState<Project | null>(projects[0]);
 
   const isProjectPage = location.pathname.startsWith("/projects/");
-  const projectId = isProjectPage ? location.pathname.replace("/projects/", "") : null;
-  const currentRouteProject = projectId ? projects.find((p) => p.id === projectId) ?? null : null;
+  const projectId = isProjectPage
+    ? location.pathname.replace("/projects/", "")
+    : null;
+  const currentRouteProject = projectId
+    ? (projects.find((p) => p.id === projectId) ?? null)
+    : null;
 
   const activeSection = isProjectPage
     ? "home"
-    : pathToSection[location.pathname] ?? "home";
+    : (pathToSection[location.pathname] ?? "home");
 
   // Sync player project with route
   useEffect(() => {
@@ -68,7 +75,8 @@ export default function Layout() {
       navigate(`/projects/${prev.id}`);
     } else {
       const idx = sectionOrder.indexOf(location.pathname);
-      const prev = sectionOrder[(idx - 1 + sectionOrder.length) % sectionOrder.length];
+      const prev =
+        sectionOrder[(idx - 1 + sectionOrder.length) % sectionOrder.length];
       navigate(prev);
     }
   }, [isProjectPage, currentRouteProject, location.pathname, navigate]);
@@ -91,13 +99,19 @@ export default function Layout() {
           </div>
         </main>
 
-        <RightPanel profile={profile} skills={skills} activeSection={activeSection} />
+        <RightPanel
+          profile={profile}
+          skills={skills}
+          activeSection={activeSection}
+        />
       </div>
 
       <MobileNav activeSection={activeSection} sectionToPath={sectionToPath} />
 
       <PlayerBar
-        currentProject={isProjectPage ? currentRouteProject : currentPlayerProject}
+        currentProject={
+          isProjectPage ? currentRouteProject : currentPlayerProject
+        }
         scrollProgress={scrollProgress}
         onNext={handleNext}
         onPrevious={handlePrevious}

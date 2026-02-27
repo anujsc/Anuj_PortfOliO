@@ -11,14 +11,18 @@ interface HomeSectionProps {
   greeting: string;
 }
 
-export default function HomeSection({ searchQuery, onSelectProject, greeting }: HomeSectionProps) {
+export default function HomeSection({
+  searchQuery,
+  onSelectProject,
+  greeting,
+}: HomeSectionProps) {
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const navigate = useNavigate();
   const brickProjects = projects.slice(0, 8);
 
   const filteredProjects = useMemo(() => {
     let filtered = projects;
-    
+
     // Category filter
     if (activeFilter === "featured") {
       filtered = projects.filter((p) => p.featured);
@@ -33,10 +37,10 @@ export default function HomeSection({ searchQuery, onSelectProject, greeting }: 
         (p) =>
           p.title.toLowerCase().includes(q) ||
           p.description.toLowerCase().includes(q) ||
-          p.technologies.some((t) => t.toLowerCase().includes(q))
+          p.technologies.some((t) => t.toLowerCase().includes(q)),
       );
     }
-    
+
     return filtered;
   }, [activeFilter, searchQuery]);
 
@@ -45,7 +49,6 @@ export default function HomeSection({ searchQuery, onSelectProject, greeting }: 
     { label: "AI", value: "ai" },
     { label: "Web", value: "web" },
     { label: "Frontend/UI", value: "frontend" },
- 
   ];
 
   return (
@@ -72,7 +75,11 @@ export default function HomeSection({ searchQuery, onSelectProject, greeting }: 
                 aria-label={project.title}
               >
                 <img
-                  src={project.thumbnail}
+                  src={
+                    project.images && project.images.length > 0
+                      ? project.images[0]
+                      : project.thumbnail
+                  }
                   alt={project.title}
                   className="w-14 h-14 object-cover shrink-0"
                 />
@@ -106,11 +113,11 @@ export default function HomeSection({ searchQuery, onSelectProject, greeting }: 
       <section aria-label="Projects">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredProjects.map((project, i) => (
-            <ProjectCard 
-              key={project.id} 
-              project={project} 
-              index={i} 
-              onSelect={onSelectProject} 
+            <ProjectCard
+              key={project.id}
+              project={project}
+              index={i}
+              onSelect={onSelectProject}
             />
           ))}
         </div>

@@ -26,6 +26,7 @@ export default function ProjectCarousel({
 }: ProjectCarouselProps) {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
+  const [isHovering, setIsHovering] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const total = images.length;
@@ -79,8 +80,14 @@ export default function ProjectCarousel({
   return (
     <div
       className={`relative ${aspectClass} overflow-hidden ${className}`}
-      onMouseEnter={stopTimer}
-      onMouseLeave={startTimer}
+      onMouseEnter={() => {
+        setIsHovering(true);
+        stopTimer();
+      }}
+      onMouseLeave={() => {
+        setIsHovering(false);
+        startTimer();
+      }}
     >
       {/* Slides */}
       <AnimatePresence initial={false} custom={direction}>
@@ -104,14 +111,20 @@ export default function ProjectCarousel({
 
       {/* Prev / Next buttons */}
       <button
-        onClick={(e) => { e.stopPropagation(); prev(); }}
+        onClick={(e) => {
+          e.stopPropagation();
+          prev();
+        }}
         className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white/80 hover:bg-black/75 hover:text-white transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
         aria-label="Previous image"
       >
         <ChevronLeft className="h-4 w-4" />
       </button>
       <button
-        onClick={(e) => { e.stopPropagation(); next(); }}
+        onClick={(e) => {
+          e.stopPropagation();
+          next();
+        }}
         className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white/80 hover:bg-black/75 hover:text-white transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
         aria-label="Next image"
       >
@@ -123,7 +136,10 @@ export default function ProjectCarousel({
         {images.map((_, i) => (
           <button
             key={i}
-            onClick={(e) => { e.stopPropagation(); goTo(i); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              goTo(i);
+            }}
             aria-label={`Go to image ${i + 1}`}
             className={`rounded-full transition-all duration-300 ${
               i === current
@@ -134,8 +150,8 @@ export default function ProjectCarousel({
         ))}
       </div>
 
-      {/* Progress bar at bottom */}
-      {autoPlay && (
+      {/* Progress bar at bottom - visible only on hover */}
+      {autoPlay && isHovering && (
         <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/10 z-10">
           <motion.div
             key={current}
