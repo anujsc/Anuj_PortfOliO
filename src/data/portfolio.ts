@@ -153,17 +153,17 @@ export const skills = [
 ];
 
 export const sidebarItems = [
-  { title: "Featured Work", icon: "star", count: 6, filter: "featured", emoji: "🟣" },
-  { title: "Web & Apps", icon: "globe", count: 5, filter: "web", emoji: "🌐" },
-  { title: "Education", icon: "brain", count: 3, filter: "education", emoji: "🎓" },
-  { title: "Experience", icon: "database", count: 4, filter: "experience", emoji: "🏢" },
+  { title: "Web & Apps", icon: "star", count: 6, filter: "home", emoji: "🟣", section: "home" },
+  { title: "About Me", icon: "globe", count: 5, filter: "about", emoji: "🌐", section: "about" },
+  { title: "Education & Experience", icon: "brain", count: 3, filter: "experience", emoji: "🎓", section: "experience" },
+  { title: "Contacts", icon: "database", count: 4, filter: "contact", emoji: "🏢", section: "contact" },
 ];
 
 export const profile = {
-  name: "Alex Rivera",
+  name: "Anuj chaudhari",
   title: "Full-Stack Developer & AI Enthusiast",
-  location: "San Francisco, CA",
-  avatar: "AR",
+  location: "Pune, Maharashtra",
+  avatar: "AC",
   stats: {
     views: 12847,
     stars: 342,
@@ -174,4 +174,187 @@ export const profile = {
     linkedin: "https://linkedin.com",
     twitter: "https://twitter.com",
   },
+};
+
+// Experience & Education Data
+export interface Experience {
+  company: string;
+  role: string;
+  period: string;
+  current: boolean;
+  achievements: string[];
+  technologies: string[];
+  promoted?: boolean;
+}
+
+export interface Education {
+  degree: string;
+  institution: string;
+  year: string;
+  highlights: string[];
+  type: 'degree' | 'certification';
+  logo?: string;
+  gpa?: string;
+  credentialUrl?: string;
+}
+
+export const experiences: Experience[] = [
+  {
+    company: "Tech Innovations Inc",
+    role: "Senior Full-Stack Developer",
+    period: "2024 - Present",
+    current: true,
+    achievements: [
+      "Led development of AI-powered analytics platform, increasing user engagement by 45%",
+      "Architected microservices infrastructure serving 100K+ daily active users",
+      "Mentored team of 5 junior developers, improving code quality metrics by 60%",
+      "Reduced API response time by 70% through optimization and caching strategies"
+    ],
+    technologies: ["React", "Node.js", "PostgreSQL", "AWS", "Docker", "Kubernetes"]
+  },
+  {
+    company: "Digital Solutions Co",
+    role: "Full-Stack Developer",
+    period: "2022 - 2024",
+    current: false,
+    promoted: true,
+    achievements: [
+      "Built real-time collaboration features used by 50K+ users",
+      "Implemented CI/CD pipeline reducing deployment time by 80%",
+      "Developed RESTful APIs handling 1M+ requests daily",
+      "Promoted to Senior Developer after 18 months"
+    ],
+    technologies: ["React", "Python", "MongoDB", "Redis", "GraphQL"]
+  },
+  {
+    company: "StartupXYZ",
+    role: "Frontend Developer",
+    period: "2021 - 2022",
+    current: false,
+    achievements: [
+      "Created responsive web applications with 98% mobile compatibility",
+      "Improved page load speed by 50% through code splitting and lazy loading",
+      "Collaborated with designers to implement pixel-perfect UI components"
+    ],
+    technologies: ["React", "TypeScript", "Tailwind CSS", "Next.js"]
+  }
+];
+
+export const education: Education[] = [
+  {
+    degree: "Bachelor of Science in Computer Science",
+    institution: "University of Technology",
+    year: "2021",
+    type: "degree",
+    gpa: "3.8/4.0",
+    highlights: [
+      "Specialized in Artificial Intelligence and Machine Learning",
+      "Thesis: 'Deep Learning Approaches for Natural Language Processing'",
+      "Dean's List all semesters",
+      "President of Computer Science Club"
+    ]
+  },
+  {
+    degree: "AWS Certified Solutions Architect",
+    institution: "Amazon Web Services",
+    year: "2023",
+    type: "certification",
+    credentialUrl: "https://aws.amazon.com/certification/",
+    highlights: [
+      "Validated expertise in designing distributed systems on AWS",
+      "Scored 920/1000 on certification exam"
+    ]
+  },
+  {
+    degree: "Meta Frontend Developer Professional Certificate",
+    institution: "Meta (Coursera)",
+    year: "2022",
+    type: "certification",
+    credentialUrl: "https://coursera.org",
+    highlights: [
+      "Completed 9-course series covering React, JavaScript, and UI/UX",
+      "Built capstone project: E-commerce platform with 95% performance score"
+    ]
+  },
+  {
+    degree: "Google Cloud Professional Data Engineer",
+    institution: "Google Cloud",
+    year: "2023",
+    type: "certification",
+    credentialUrl: "https://cloud.google.com/certification",
+    highlights: [
+      "Expertise in designing and building data processing systems",
+      "Hands-on experience with BigQuery, Dataflow, and Pub/Sub"
+    ]
+  }
+];
+
+// About Me Data
+export const aboutMe = {
+  story: [
+    "I'm a full-stack developer who fell in love with code during a high school robotics competition. What started as curiosity about 'how websites work' turned into a passion for building digital experiences that make people's lives easier.",
+    "Over the past 5 years, I've worked with startups and established companies, wearing many hats—from crafting pixel-perfect UIs to architecting scalable backend systems. I believe the best solutions come from understanding both the technical constraints and the human needs behind every project.",
+    "When I'm not coding, you'll find me exploring new coffee shops with my camera, contributing to open-source projects, or experimenting with generative AI art. I'm always learning, always building, and always excited about what's next in tech."
+  ],
+  pullQuote: "Code is poetry written for machines but read by humans.",
+  timeline: [
+    { year: "2021", event: "Graduated with CS degree, started first dev job" },
+    { year: "2022", event: "Built first viral side project (50K users)" },
+    { year: "2023", event: "Promoted to Senior Developer, earned AWS certification" },
+    { year: "2024", event: "Led team of 5, launched AI-powered platform" }
+  ],
+  interests: [
+    { icon: "📸", name: "Photography", description: "Street & landscape photography" },
+    { icon: "🎵", name: "Music Production", description: "Electronic & lo-fi beats" },
+    { icon: "🌱", name: "Open Source", description: "Contributing to React ecosystem" },
+    { icon: "✈️", name: "Travel", description: "15 countries and counting" }
+  ],
+  funFacts: [
+    { label: "Coffee consumed", value: "2,847 cups", icon: "☕" },
+    { label: "GitHub commits", value: "12,453", icon: "💻" },
+    { label: "Side projects", value: "23", icon: "🚀" },
+    { label: "Stack Overflow rep", value: "8,942", icon: "📚" }
+  ],
+  influencedBy: [
+    { name: "React", type: "Technology", icon: "⚛️" },
+    { name: "Vercel", type: "Company", icon: "▲" },
+    { name: "Kent C. Dodds", type: "Mentor", icon: "👨‍🏫" },
+    { name: "Tailwind CSS", type: "Technology", icon: "🎨" }
+  ],
+  availability: {
+    status: "available",
+    message: "Available for freelance projects"
+  },
+  languages: ["English (Native)", "Hindi (Fluent)", "Spanish (Conversational)"],
+  headshot: "AC"
+};
+
+// Contact Data
+export const contactInfo = {
+  headline: "Let's create something together 🎧",
+  availability: {
+    status: "available",
+    message: "Available for work"
+  },
+  responseTime: "Usually responds in 24h",
+  bestTime: "9 AM - 6 PM IST (GMT+5:30)",
+  preferredMethod: "Email or LinkedIn",
+  email: "hello@example.com",
+  socials: {
+    github: {
+      url: "https://github.com",
+      username: "@yourusername",
+      contributions: "1,234 contributions last year"
+    },
+    linkedin: {
+      url: "https://linkedin.com",
+      username: "Your Name",
+      badge: "500+ connections"
+    },
+    twitter: {
+      url: "https://twitter.com",
+      username: "@yourusername",
+      latestTweet: "Just shipped a new feature! 🚀"
+    }
+  }
 };

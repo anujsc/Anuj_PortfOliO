@@ -1,11 +1,15 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ChevronUp, ExternalLink, Github, Clock, X } from "lucide-react";
+import { ChevronDown, ChevronUp, ExternalLink, Github as GithubIcon, Clock, X } from "lucide-react";
 import TopNav from "@/components/TopNav";
 import LibrarySidebar from "@/components/LibrarySidebar";
 import RightPanel from "@/components/RightPanel";
-import ProjectCard from "@/components/ProjectCard";
+import MobileNav from "@/components/MobileNav";
 import PlayerBar from "@/components/PlayerBar";
+import HomeSection from "@/components/sections/HomeSection";
+import AboutSection from "@/components/sections/AboutSection";
+import ExperienceSection from "@/components/sections/ExperienceSection";
+import ContactSection from "@/components/sections/ContactSection";
 import { useScrollProgress, useGreeting } from "@/hooks/usePortfolio";
 import { projects, skills, sidebarItems, profile } from "@/data/portfolio";
 import type { Project, ProjectTrack } from "@/data/portfolio";
@@ -81,7 +85,7 @@ function ProjectDetail({ project, onClose }: { project: Project; onClose: () => 
         )}
         {project.githubUrl && (
           <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
-            <Github className="h-4 w-4" /> Source
+            <GithubIcon className="h-4 w-4" /> Source
           </a>
         )}
       </div>
@@ -104,27 +108,10 @@ function ProjectDetail({ project, onClose }: { project: Project; onClose: () => 
 export default function Index() {
   const greeting = useGreeting();
   const scrollProgress = useScrollProgress();
-  const [activeFilter, setActiveFilter] = useState("featured");
+  const [activeSection, setActiveSection] = useState<string>("home");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [currentPlayerProject, setCurrentPlayerProject] = useState<Project | null>(projects[0]);
-
-  const filteredProjects = useMemo(() => {
-    let filtered = projects;
-    if (activeFilter === "featured") filtered = projects.filter((p) => p.featured);
-    else if (activeFilter !== "all") filtered = projects.filter((p) => p.category === activeFilter);
-
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (p) =>
-          p.title.toLowerCase().includes(q) ||
-          p.description.toLowerCase().includes(q) ||
-          p.technologies.some((t) => t.toLowerCase().includes(q))
-      );
-    }
-    return filtered;
-  }, [activeFilter, searchQuery]);
 
   const handleSelectProject = useCallback((project: Project) => {
     setSelectedProject(project);
@@ -132,38 +119,60 @@ export default function Index() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  // When sidebar filter changes, clear selected project so grid shows
-  const handleFilterChange = useCallback((filter: string) => {
-    setActiveFilter(filter);
+  const handleSidebarClick = useCallback((item: typeof sidebarItems[0]) => {
+    setActiveSection(item.section);
     setSelectedProject(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  const navigateProject = useCallback(
+  // Navigate between sections with player bar buttons
+  const navigateSection = useCallback(
     (direction: 1 | -1) => {
-      const idx = projects.findIndex((p) => p.id === currentPlayerProject?.id);
-      const next = projects[(idx + direction + projects.length) % projects.length];
-      setCurrentPlayerProject(next);
-      if (selectedProject) setSelectedProject(next);
+      const sections = ["home", "about", "experience", "contact"];
+      const currentIndex = sections.indexOf(activeSection);
+      const nextIndex = (currentIndex + direction + sections.length) % sections.length;
+      setActiveSection(sections[nextIndex]);
+      setSelectedProject(null);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     },
-    [currentPlayerProject, selectedProject]
+    [activeSection]
   );
 
-  const categoryCards = [
-    { label: "AI & ML", filter: "ai", color: "from-primary/30 to-primary/5" },
-    { label: "Web Apps", filter: "web", color: "from-accent/30 to-accent/5" },
-    { label: "Data", filter: "data", color: "from-blue-500/30 to-blue-500/5" },
-  ];
+  // Navigate between projects (when in project detail view)
+  const navigateProject = useCallback(
+    (direction: 1 | -1) => {
+      if (selectedProject) {
+        // Navigate between projects
+        const idx = projects.findIndex((p) => p.id === selectedProject.id);
+        const next = projects[(idx + direction + projects.length) % projects.length];
+        setSelectedProject(next);
+        setCurrentPlayerProject(next);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        // Navigate between sections
+        navigateSection(direction);
+      }
+    },
+    [selectedProject, navigateSection]
+  );
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <TopNav searchQuery={searchQuery} onSearchChange={setSearchQuery} />
 
       <div className="flex flex-1">
-        <LibrarySidebar activeFilter={activeFilter} onFilterChange={handleFilterChange} items={sidebarItems} />
+        <LibrarySidebar 
+          activeFilter={activeSection} 
+          onFilterChange={(filter) => {
+            const item = sidebarItems.find(i => i.filter === filter);
+            if (item) handleSidebarClick(item);
+          }} 
+          items={sidebarItems} 
+        />
 
         {/* Main Content */}
-        <main className="flex-1 min-w-0 pb-24 overflow-x-hidden">
-          <div className="p-6 lg:p-8">
+        <main className="flex-1 min-w-0 pb-24 lg:pb-24 overflow-x-hidden">
+          <div className="p-4 sm:p-6 lg:p-8">
             <AnimatePresence mode="wait">
               {selectedProject ? (
                 <ProjectDetail
@@ -172,58 +181,35 @@ export default function Index() {
                   onClose={() => setSelectedProject(null)}
                 />
               ) : (
-                <motion.div
-                  key="home"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  {/* Greeting */}
-                  <h1 className="text-3xl lg:text-4xl font-heading font-bold text-foreground mb-8">
-                    {greeting}
-                  </h1>
-
-                  {/* Project Grid */}
-                  <section aria-label="Projects">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                      {filteredProjects.map((project, i) => (
-                        <ProjectCard key={project.id} project={project} index={i} onSelect={handleSelectProject} />
-                      ))}
-                    </div>
-                    {filteredProjects.length === 0 && (
-                      <p className="text-center text-muted-foreground py-20">No projects match your search.</p>
-                    )}
-                  </section>
-
-                  {/* Made For You */}
-                  <section className="mt-12" aria-label="Categories">
-                    <h2 className="text-xl font-heading font-bold text-foreground mb-4">Made For You</h2>
-                    <div className="flex gap-4 overflow-x-auto pb-2 -mx-2 px-2">
-                      {categoryCards.map((cat) => (
-                        <button
-                          key={cat.filter}
-                          onClick={() => { setActiveFilter(cat.filter); setSelectedProject(null); }}
-                          className={`shrink-0 w-44 h-28 rounded-lg bg-gradient-to-br ${cat.color} flex items-end p-4 font-heading font-semibold text-foreground hover:scale-[1.02] transition-transform`}
-                        >
-                          {cat.label}
-                        </button>
-                      ))}
-                    </div>
-                  </section>
-                </motion.div>
+                <div key={activeSection}>
+                  {activeSection === "home" && (
+                    <HomeSection
+                      searchQuery={searchQuery}
+                      onSelectProject={handleSelectProject}
+                      greeting={greeting}
+                    />
+                  )}
+                  {activeSection === "about" && <AboutSection />}
+                  {activeSection === "experience" && <ExperienceSection />}
+                  {activeSection === "contact" && <ContactSection />}
+                </div>
               )}
             </AnimatePresence>
           </div>
         </main>
 
-        <RightPanel profile={profile} skills={skills} />
+        <RightPanel profile={profile} skills={skills} activeSection={activeSection} />
       </div>
+
+      <MobileNav activeSection={activeSection} onSectionChange={setActiveSection} />
 
       <PlayerBar
         currentProject={currentPlayerProject}
         scrollProgress={scrollProgress}
         onNext={() => navigateProject(1)}
         onPrevious={() => navigateProject(-1)}
+        activeSection={activeSection}
+        isProjectView={!!selectedProject}
       />
     </div>
   );

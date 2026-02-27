@@ -1,4 +1,4 @@
-import { SkipBack, SkipForward, Play, Pause, ExternalLink, Github } from "lucide-react";
+import { SkipBack, SkipForward, Play, Pause, ExternalLink, Github as GithubIcon } from "lucide-react";
 import type { Project } from "@/data/portfolio";
 
 interface PlayerBarProps {
@@ -6,9 +6,18 @@ interface PlayerBarProps {
   scrollProgress: number;
   onNext: () => void;
   onPrevious: () => void;
+  activeSection?: string;
+  isProjectView?: boolean;
 }
 
-export default function PlayerBar({ currentProject, scrollProgress, onNext, onPrevious }: PlayerBarProps) {
+export default function PlayerBar({ currentProject, scrollProgress, onNext, onPrevious, activeSection = "home", isProjectView = false }: PlayerBarProps) {
+  const sectionNames: Record<string, string> = {
+    home: "Web & Apps",
+    about: "About Me",
+    experience: "Education & Experience",
+    contact: "Contacts"
+  };
+
   return (
     <footer className="fixed bottom-0 left-0 right-0 h-[72px] bg-card/95 backdrop-blur-xl border-t border-border z-50 flex items-center px-4 gap-4">
       {/* Progress bar */}
@@ -23,9 +32,9 @@ export default function PlayerBar({ currentProject, scrollProgress, onNext, onPr
         />
       </div>
 
-      {/* Left: Current project */}
+      {/* Left: Current project or section */}
       <div className="flex items-center gap-3 flex-1 min-w-0">
-        {currentProject ? (
+        {isProjectView && currentProject ? (
           <>
             <img
               src={currentProject.thumbnail}
@@ -39,9 +48,17 @@ export default function PlayerBar({ currentProject, scrollProgress, onNext, onPr
           </>
         ) : (
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded bg-muted" />
+            <div className="w-12 h-12 rounded bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center shrink-0">
+              <span className="text-xl">
+                {activeSection === "home" && "🟣"}
+                {activeSection === "about" && "🌐"}
+                {activeSection === "experience" && "🎓"}
+                {activeSection === "contact" && "🏢"}
+              </span>
+            </div>
             <div>
-              <p className="text-sm text-muted-foreground">Select a project</p>
+              <p className="text-sm font-medium text-foreground">{sectionNames[activeSection]}</p>
+              <p className="text-xs text-muted-foreground">Navigate sections</p>
             </div>
           </div>
         )}
@@ -52,7 +69,7 @@ export default function PlayerBar({ currentProject, scrollProgress, onNext, onPr
         <button
           onClick={onPrevious}
           className="text-muted-foreground hover:text-foreground transition-colors"
-          aria-label="Previous project"
+          aria-label={isProjectView ? "Previous project" : "Previous section"}
         >
           <SkipBack className="h-4 w-4" fill="currentColor" />
         </button>
@@ -62,7 +79,7 @@ export default function PlayerBar({ currentProject, scrollProgress, onNext, onPr
         <button
           onClick={onNext}
           className="text-muted-foreground hover:text-foreground transition-colors"
-          aria-label="Next project"
+          aria-label={isProjectView ? "Next project" : "Next section"}
         >
           <SkipForward className="h-4 w-4" fill="currentColor" />
         </button>
@@ -70,7 +87,7 @@ export default function PlayerBar({ currentProject, scrollProgress, onNext, onPr
 
       {/* Right: Links */}
       <div className="flex-1 flex items-center justify-end gap-3">
-        {currentProject?.liveUrl && (
+        {isProjectView && currentProject?.liveUrl && (
           <a
             href={currentProject.liveUrl}
             target="_blank"
@@ -81,14 +98,14 @@ export default function PlayerBar({ currentProject, scrollProgress, onNext, onPr
             Live Demo
           </a>
         )}
-        {currentProject?.githubUrl && (
+        {isProjectView && currentProject?.githubUrl && (
           <a
             href={currentProject.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
-            <Github className="h-3.5 w-3.5" />
+            <GithubIcon className="h-3.5 w-3.5" />
             Source
           </a>
         )}
