@@ -3,13 +3,13 @@ import {
   Github,
   Linkedin,
   Twitter,
-  Eye,
-  Star,
+  GitBranch,
+  Clock,
   FolderOpen,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { useEffect } from "react";
 import type { profile as ProfileType } from "@/data/portfolio";
-import profilePic from "@/assets/profilepic.jpg";
 
 interface RightPanelProps {
   profile: typeof ProfileType;
@@ -19,14 +19,18 @@ interface RightPanelProps {
 
 function SkillPill({ name, level }: { name: string; level: string }) {
   const colorMap: Record<string, string> = {
-    expert: "bg-primary/20 text-primary border-primary/30",
-    intermediate: "bg-accent/15 text-accent border-accent/30",
-    beginner: "bg-muted text-muted-foreground border-border",
+    expert:
+      "bg-primary/20 text-primary border-primary/30 hover:bg-primary/25 hover:shadow-[0_0_10px_hsl(141_73%_42%/0.25)] hover:border-primary/50 cursor-default",
+    intermediate:
+      "bg-accent/15 text-accent border-accent/30 hover:bg-accent/20 transition-all cursor-default",
+    beginner:
+      "bg-muted text-muted-foreground border-border hover:bg-muted/80 cursor-default",
   };
 
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium border ${colorMap[level] || colorMap.beginner}`}
+      className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium border transition-all duration-200 ${colorMap[level] || colorMap.beginner
+        }`}
       title={`${name} — ${level}`}
     >
       {name}
@@ -34,20 +38,35 @@ function SkillPill({ name, level }: { name: string; level: string }) {
   );
 }
 
+function AnimatedCounter({ value }: { value: number }) {
+  const mv = useMotionValue(0);
+  const spring = useSpring(mv, { stiffness: 60, damping: 18 });
+  const display = useTransform(spring, (n) =>
+    Math.round(n).toLocaleString()
+  );
+  useEffect(() => {
+    mv.set(value);
+  }, [value, mv]);
+  return <motion.span>{display}</motion.span>;
+}
+
 function StatItem({
   icon: Icon,
   label,
   value,
+  suffix = "",
 }: {
   icon: React.FC<{ className?: string }>;
   label: string;
   value: number;
+  suffix?: string;
 }) {
   return (
     <div className="text-center">
       <Icon className="h-4 w-4 text-muted-foreground mx-auto mb-1" />
       <p className="text-lg font-heading font-bold text-foreground">
-        {value.toLocaleString()}
+        <AnimatedCounter value={value} />
+        {suffix}
       </p>
       <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
         {label}
@@ -65,8 +84,16 @@ export default function RightPanel({
     <aside className="hidden lg:flex flex-col w-[280px] shrink-0 border-l border-border h-[calc(100vh-136px)] sticky top-16 overflow-y-auto p-4 gap-6">
       {/* Profile Card */}
       <div className="text-center">
-        <div className="w-20 h-20 rounded-full border-2 border-primary flex items-center justify-center mx-auto mb-3 overflow-hidden">
-          <img src={profilePic} alt={profile.name} className="w-full h-full object-cover" />
+        {/* AC initials badge */}
+        <div className="relative w-20 h-20 mx-auto mb-3">
+          {/* Outer glow */}
+          <div className="absolute inset-0 rounded-full bg-primary/30 blur-md scale-110" />
+          {/* Badge */}
+          <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-primary via-primary/80 to-primary/50 flex items-center justify-center shadow-lg shadow-primary/30 ring-2 ring-primary/40">
+            <span className="text-2xl font-heading font-extrabold text-black tracking-wide select-none">
+              AC
+            </span>
+          </div>
         </div>
         <h2 className="font-heading font-bold text-foreground">
           {profile.name}
@@ -80,8 +107,8 @@ export default function RightPanel({
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-2 py-3 border-y border-border">
-        <StatItem icon={Eye} label="Views" value={profile.stats.views} />
-        <StatItem icon={Star} label="Stars" value={profile.stats.stars} />
+        <StatItem icon={GitBranch} label="Commits" value={profile.stats.commits} suffix="+" />
+        <StatItem icon={Clock} label="Hrs Coded" value={profile.stats.hoursCoded} suffix="+" />
         <StatItem
           icon={FolderOpen}
           label="Projects"
@@ -232,7 +259,7 @@ export default function RightPanel({
 
       {/* CTA */}
       <motion.a
-        href="mailto:hello@example.com"
+        href="mailto:anujpvt@gmail.com"
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         className="mt-auto flex items-center justify-center gap-2 w-full py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-semibold hover:brightness-110 transition-all glow-green-sm"

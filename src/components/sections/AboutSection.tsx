@@ -1,4 +1,6 @@
 import { motion } from "framer-motion";
+import profilePic from "@/assets/profilepic.jpg";
+import LazyImage from "@/components/LazyImage";
 import {
   Calendar,
   MapPin,
@@ -22,8 +24,6 @@ import {
   Sparkles,
 } from "lucide-react";
 import { aboutMe } from "@/data/portfolio";
-import profile from "@/assets/profilepic.jpg";
-
 const interestIconMap: Record<string, React.FC<{ className?: string }>> = {
   "AI/ML": Bot,
   "Full-Stack Dev": Monitor,
@@ -144,10 +144,80 @@ export default function AboutSection() {
 
         {/* Right Column */}
         <div className="space-y-6 order-1 lg:order-2">
-          {/* Headshot */}
-          <div className="bg-card rounded-xl p-6 text-center">
+
+          {/* ── MOBILE ONLY: Home-style hero profile ── */}
+          <motion.div
+            className="lg:hidden flex items-center justify-center py-4"
+            initial={{ opacity: 0, scale: 0.88 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.55, delay: 0.15, ease: "easeOut" }}
+          >
+            <div className="relative w-[200px] h-[200px]">
+              {/* Ambient glow */}
+              <div className="absolute inset-0 rounded-full bg-primary/20 blur-2xl scale-110" />
+
+              {/* Gradient ring + photo */}
+              <div className="relative w-[200px] h-[200px] rounded-full p-[3px] bg-gradient-to-br from-primary via-primary/50 to-primary/10 shadow-xl shadow-primary/20">
+                <div className="w-full h-full rounded-full overflow-hidden bg-card">
+                  <LazyImage
+                    src={profilePic}
+                    alt="Anuj Chaudhari"
+                    className="w-full h-full object-cover"
+                    width={200}
+                    height={200}
+                  />
+                </div>
+              </div>
+
+              {/* Floating badge: Company (top-right) */}
+              <motion.div
+                className="absolute -top-3 -right-12 bg-card/95 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl min-w-[130px]"
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.55, duration: 0.35 }}
+              >
+                <p className="text-[10px] text-muted-foreground leading-none mb-1">Currently @</p>
+                <p className="text-[11px] font-semibold text-foreground leading-tight">Enprosys Infotech</p>
+              </motion.div>
+
+              {/* Floating badge: Open to work (bottom-left) */}
+              <motion.div
+                className="absolute -bottom-3 -left-10 bg-primary/10 backdrop-blur-md border border-primary/30 rounded-xl px-3 py-2 shadow-xl"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.65, duration: 0.35 }}
+              >
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-primary animate-pulse shrink-0" />
+                  <p className="text-[11px] font-semibold text-primary leading-none whitespace-nowrap">
+                    {aboutMe.availability.message}
+                  </p>
+                </div>
+              </motion.div>
+
+              {/* Floating badge: Tech stack (left-center) */}
+              <motion.div
+                className="absolute top-1/2 -translate-y-1/2 -left-16 bg-card/95 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl"
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.75, duration: 0.35 }}
+              >
+                <p className="text-[10px] font-mono text-primary leading-none">React · Node.js</p>
+                <p className="text-[10px] font-mono text-muted-foreground leading-none mt-0.5">Angular · .NET</p>
+              </motion.div>
+            </div>
+          </motion.div>
+
+          {/* ── DESKTOP: Original simple headshot card ── */}
+          <div className="hidden lg:block bg-card rounded-xl p-6 text-center">
             <div className="w-32 h-32 rounded-full border-4 border-primary flex items-center justify-center mx-auto mb-4 overflow-hidden">
-              <img src={profile} alt="profile" className="w-full h-full object-cover" />
+              <LazyImage
+                src={profilePic}
+                alt="profile"
+                className="w-full h-full object-cover"
+                width={128}
+                height={128}
+              />
             </div>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />

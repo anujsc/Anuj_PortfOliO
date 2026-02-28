@@ -413,8 +413,8 @@ export const profile = {
   location: "Indore, India",
   avatar: "AC",
   stats: {
-    views: 12847,
-    stars: 342,
+    commits: 500,
+    hoursCoded: 1200,
     projects: projects.length,
   },
   socials: {

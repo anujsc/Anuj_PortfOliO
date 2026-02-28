@@ -22,9 +22,10 @@ function ProjectCard({ project, index, onSelect }: ProjectCardProps) {
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.08 }}
+      initial={{ opacity: 0, y: 28 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.45, delay: index * 0.08, ease: "easeOut" }}
       onClick={handleClick}
       className="group relative bg-card rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:bg-card-hover hover:shadow-2xl hover:shadow-primary/10 ring-1 ring-white/5 hover:ring-white/10"
       role="button"

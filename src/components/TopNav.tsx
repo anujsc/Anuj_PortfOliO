@@ -1,4 +1,4 @@
-import { Search, ChevronLeft, ChevronRight, Disc3 } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, Disc3, Download } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
@@ -49,21 +49,37 @@ export default function TopNav({ searchQuery, onSearchChange }: TopNavProps) {
             placeholder="Search projects, skills, tech..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full h-9 pl-10 pr-4 rounded-full bg-white/8 border border-white/8 text-sm text-[black] placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all"
+            className="w-full h-9 pl-10 pr-4 rounded-full bg-white/8 border border-white/8 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all"
             aria-label="Search projects"
           />
         </div>
       </div>
 
-      {/* CTA */}
-      <motion.a
-        href="mailto:anujpvt@gmail.com"
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.97 }}
-        className="hidden md:flex items-center gap-2 px-5 py-2 rounded-full bg-primary text-primary-foreground text-sm font-semibold hover:brightness-110 transition-all glow-green-sm shadow-lg shadow-primary/20"
-      >
-        Hire Me
-      </motion.a>
+      {/* CTAs */}
+      <div className="flex items-center gap-2 shrink-0">
+        {/* Resume Download */}
+        <motion.a
+          href="/Anuj_Chaudhari_Resume.pdf"
+          download
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+          className="hidden md:flex items-center gap-1.5 px-4 py-2 rounded-full border border-border text-muted-foreground text-sm font-medium hover:text-foreground hover:border-primary/50 transition-all"
+          title="Download Resume"
+        >
+          <Download className="h-3.5 w-3.5" />
+          Resume
+        </motion.a>
+
+        {/* Hire Me */}
+        <motion.a
+          href="mailto:anujpvt@gmail.com"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
+          className="hidden md:flex items-center gap-2 px-5 py-2 rounded-full bg-primary text-primary-foreground text-sm font-semibold hover:brightness-110 transition-all glow-green-sm shadow-lg shadow-primary/20"
+        >
+          Hire Me
+        </motion.a>
+      </div>
     </header>
   );
 }
