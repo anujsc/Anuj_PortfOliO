@@ -22,6 +22,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { aboutMe } from "@/data/portfolio";
+import profile from "@/assets/profilepic.jpg";
 
 const interestIconMap: Record<string, React.FC<{ className?: string }>> = {
   "AI/ML": Bot,
@@ -145,10 +146,8 @@ export default function AboutSection() {
         <div className="space-y-6 order-1 lg:order-2">
           {/* Headshot */}
           <div className="bg-card rounded-xl p-6 text-center">
-            <div className="w-32 h-32 rounded-full bg-primary/20 border-4 border-primary flex items-center justify-center mx-auto mb-4">
-              <span className="text-5xl font-heading font-bold text-primary">
-                {aboutMe.headshot}
-              </span>
+            <div className="w-32 h-32 rounded-full border-4 border-primary flex items-center justify-center mx-auto mb-4 overflow-hidden">
+              <img src={profile} alt="profile" className="w-full h-full object-cover" />
             </div>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />

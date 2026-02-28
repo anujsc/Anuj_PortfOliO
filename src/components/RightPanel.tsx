@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import type { profile as ProfileType } from "@/data/portfolio";
+import profilePic from "@/assets/profilepic.jpg";
 
 interface RightPanelProps {
   profile: typeof ProfileType;
@@ -64,10 +65,8 @@ export default function RightPanel({
     <aside className="hidden lg:flex flex-col w-[280px] shrink-0 border-l border-border h-[calc(100vh-136px)] sticky top-16 overflow-y-auto p-4 gap-6">
       {/* Profile Card */}
       <div className="text-center">
-        <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-3">
-          <span className="text-2xl font-heading font-bold text-primary">
-            {profile.avatar}
-          </span>
+        <div className="w-20 h-20 rounded-full border-2 border-primary flex items-center justify-center mx-auto mb-3 overflow-hidden">
+          <img src={profilePic} alt={profile.name} className="w-full h-full object-cover" />
         </div>
         <h2 className="font-heading font-bold text-foreground">
           {profile.name}

@@ -168,13 +168,13 @@ export default function ExperienceSection() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-3xl font-heading font-bold text-primary">
-                  {experiences.length}
+                  1+
                 </p>
                 <p className="text-xs text-muted-foreground">Companies</p>
               </div>
               <div>
                 <p className="text-3xl font-heading font-bold text-primary">
-                  {new Date().getFullYear() - 2021}+
+                  {1}
                 </p>
                 <p className="text-xs text-muted-foreground">Years Experience</p>
               </div>

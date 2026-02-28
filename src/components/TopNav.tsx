@@ -49,7 +49,7 @@ export default function TopNav({ searchQuery, onSearchChange }: TopNavProps) {
             placeholder="Search projects, skills, tech..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full h-9 pl-10 pr-4 rounded-full bg-white/8 border border-white/8 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all"
+            className="w-full h-9 pl-10 pr-4 rounded-full bg-white/8 border border-white/8 text-sm text-[black] placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all"
             aria-label="Search projects"
           />
         </div>

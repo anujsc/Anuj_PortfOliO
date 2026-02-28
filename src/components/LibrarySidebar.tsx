@@ -38,19 +38,17 @@ function SidebarItem({
       // PERF: Prefetch route on hover/focus for instant navigation
       onMouseEnter={() => prefetchRoute(href)}
       onFocus={() => prefetchRoute(href)}
-      className={`group flex w-full items-center gap-3 rounded-md px-3 py-3 text-sm transition-all duration-200 ${
-        active
+      className={`group flex w-full items-center gap-3 rounded-md px-3 py-3 text-sm transition-all duration-200 ${active
           ? "bg-white/10 text-foreground"
           : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
-      }`}
+        }`}
       aria-label={`View ${title}`}
     >
       <span
-        className={`flex items-center justify-center w-10 h-10 rounded-md shrink-0 transition-colors ${
-          active
+        className={`flex items-center justify-center w-10 h-10 rounded-md shrink-0 transition-colors ${active
             ? "bg-primary/20 text-primary"
             : "bg-muted text-muted-foreground group-hover:text-foreground"
-        }`}
+          }`}
       >
         <Icon className="h-5 w-5" />
       </span>
@@ -123,14 +121,14 @@ export default function LibrarySidebar({
           role="navigation"
           aria-label="Portfolio sections"
         >
-          {items.map((item) => {
+          {items.map((item, index) => {
             const active = !isProjectPage && activeSection === item.section;
             return (
               <SidebarItem
                 key={item.filter}
                 title={item.title}
                 iconKey={item.icon}
-                count={item.count}
+                count={index + 1}
                 active={active}
                 href={sectionToPath[item.section] ?? "/"}
               />
