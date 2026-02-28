@@ -1,3 +1,4 @@
+// PERF: Memoized track toggle and optimized image loading
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -13,10 +14,11 @@ import {
   Zap,
   Flag,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { projects } from "@/data/portfolio";
 import type { ProjectTrack } from "@/data/portfolio";
 import ProjectCarousel from "@/components/ProjectCarousel";
+import LazyImage from "@/components/LazyImage";
 
 const trackIconMap: Record<string, React.FC<{ className?: string }>> = {
   problem: Flag,
@@ -93,23 +95,37 @@ export default function ProjectPage() {
   const navigate = useNavigate();
   const [openTrackIndex, setOpenTrackIndex] = useState<number | null>(null);
 
-  const toggleTrack = (i: number) =>
+  // PERF: Memoize toggle callback to prevent re-renders
+  const toggleTrack = useCallback((i: number) => {
     setOpenTrackIndex((prev) => (prev === i ? null : i));
+  }, []);
 
-  const projectIndex = projects.findIndex((p) => p.id === id);
-  const project = projects[projectIndex];
+  // PERF: Memoize project lookup
+  const { project, projectIndex, prevProject, nextProject } = useMemo(() => {
+    const idx = projects.findIndex((p) => p.id === id);
+    const proj = projects[idx];
+    const prev = projects[(idx - 1 + projects.length) % projects.length];
+    const next = projects[(idx + 1) % projects.length];
+    return {
+      project: proj,
+      projectIndex: idx,
+      prevProject: prev,
+      nextProject: next,
+    };
+  }, [id]);
 
   if (!project) {
     return (
       <div className="flex flex-col items-center justify-center py-32">
-        <p className="text-2xl font-heading font-bold text-foreground mb-2">Project not found</p>
-        <Link to="/" className="text-primary hover:underline text-sm">← Back to projects</Link>
+        <p className="text-2xl font-heading font-bold text-foreground mb-2">
+          Project not found
+        </p>
+        <Link to="/" className="text-primary hover:underline text-sm">
+          ← Back to projects
+        </Link>
       </div>
     );
   }
-
-  const prevProject = projects[(projectIndex - 1 + projects.length) % projects.length];
-  const nextProject = projects[(projectIndex + 1) % projects.length];
 
   return (
     <motion.div
@@ -160,10 +176,11 @@ export default function ProjectPage() {
           />
         ) : (
           <>
-            <img
+            {/* PERF: Use LazyImage with explicit dimensions */}
+            <LazyImage
               src={project.thumbnail}
               alt={project.title}
-              className="w-full aspect-[21/9] object-cover"
+              className="w-full aspect-[21/9]"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
             <div className="absolute bottom-6 left-6 right-6">
@@ -251,8 +268,12 @@ export default function ProjectPage() {
         >
           <ArrowLeft className="h-4 w-4 text-muted-foreground group-hover:-translate-x-0.5 transition-transform shrink-0" />
           <div className="min-w-0">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-0.5">Previous</p>
-            <p className="text-sm font-medium text-foreground truncate">{prevProject.title}</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-0.5">
+              Previous
+            </p>
+            <p className="text-sm font-medium text-foreground truncate">
+              {prevProject.title}
+            </p>
           </div>
         </button>
         <button
@@ -260,8 +281,12 @@ export default function ProjectPage() {
           className="flex items-center gap-3 p-4 rounded-xl bg-card hover:bg-card-hover transition-colors text-right group ring-1 ring-white/5 justify-end"
         >
           <div className="min-w-0">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-0.5">Next</p>
-            <p className="text-sm font-medium text-foreground truncate">{nextProject.title}</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-0.5">
+              Next
+            </p>
+            <p className="text-sm font-medium text-foreground truncate">
+              {nextProject.title}
+            </p>
           </div>
           <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-0.5 transition-transform shrink-0" />
         </button>

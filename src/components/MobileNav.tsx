@@ -1,3 +1,4 @@
+// PERF: Added route prefetching on hover/touch for instant navigation
 import { Link } from "react-router-dom";
 import {
   LayoutGrid,
@@ -7,6 +8,7 @@ import {
   Music,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { prefetchRoute } from "@/utils/routePrefetch";
 
 interface MobileNavProps {
   activeSection: string;
@@ -36,6 +38,9 @@ export default function MobileNav({
             <Link
               key={item.id}
               to={sectionToPath[item.id] ?? "/"}
+              // PERF: Prefetch on touch/hover for instant navigation
+              onTouchStart={() => prefetchRoute(sectionToPath[item.id] ?? "/")}
+              onMouseEnter={() => prefetchRoute(sectionToPath[item.id] ?? "/")}
               className="relative flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors"
               aria-label={item.label}
             >

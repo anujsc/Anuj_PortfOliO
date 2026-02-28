@@ -1,6 +1,8 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+// PERF: Memoized callbacks to prevent unnecessary re-renders
+import { useState, useEffect, useCallback, useRef, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import LazyImage from "./LazyImage";
 
 interface ProjectCarouselProps {
   images: string[];
@@ -15,7 +17,7 @@ interface ProjectCarouselProps {
   intervalMs?: number;
 }
 
-export default function ProjectCarousel({
+function ProjectCarousel({
   images,
   alt,
   aspectClass = "aspect-video",
@@ -65,7 +67,8 @@ export default function ProjectCarousel({
   if (total === 1) {
     return (
       <div className={`relative ${aspectClass} overflow-hidden ${className}`}>
-        <img src={images[0]} alt={alt} className="w-full h-full object-cover" />
+        {/* PERF: Use LazyImage for single image with lazy loading */}
+        <LazyImage src={images[0]} alt={alt} className="w-full h-full" />
         {overlay}
       </div>
     );
@@ -91,7 +94,7 @@ export default function ProjectCarousel({
     >
       {/* Slides */}
       <AnimatePresence initial={false} custom={direction}>
-        <motion.img
+        <motion.div
           key={current}
           custom={direction}
           variants={variants}
@@ -99,11 +102,16 @@ export default function ProjectCarousel({
           animate="center"
           exit="exit"
           transition={{ duration: 0.4, ease: "easeInOut" }}
-          src={images[current]}
-          alt={`${alt} — ${current + 1} of ${total}`}
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full"
           draggable={false}
-        />
+        >
+          {/* PERF: Use LazyImage with explicit dimensions to prevent CLS */}
+          <LazyImage
+            src={images[current]}
+            alt={`${alt} — ${current + 1} of ${total}`}
+            className="w-full h-full"
+          />
+        </motion.div>
       </AnimatePresence>
 
       {/* Overlay slot (gradient + text, passed from parent) */}
@@ -165,3 +173,6 @@ export default function ProjectCarousel({
     </div>
   );
 }
+
+// PERF: Memoize component to prevent unnecessary re-renders
+export default memo(ProjectCarousel);

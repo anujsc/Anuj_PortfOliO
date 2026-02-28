@@ -12,10 +12,33 @@ export default defineConfig(({ mode }) => ({
       overlay: false,
     },
   },
-  plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
+  plugins: [react(), mode === "development" && componentTagger()].filter(
+    Boolean,
+  ),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  // PERF: Build optimizations for production
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // PERF: Separate vendor chunks for better caching
+          "react-vendor": ["react", "react-dom", "react-router-dom"],
+          "framer-motion": ["framer-motion"],
+          "ui-vendor": [
+            "lucide-react",
+            "@radix-ui/react-toast",
+            "@radix-ui/react-tooltip",
+          ],
+        },
+      },
+    },
+    // PERF: Use esbuild for minification (faster than terser)
+    minify: "esbuild",
+    // PERF: Optimize chunk size
+    chunkSizeWarningLimit: 1000,
   },
 }));

@@ -152,7 +152,7 @@ export default function RightPanel({
             </h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>🎂 Developer since 2021</li>
-              <li>💼 5+ years experience</li>
+              <li>💼 1+ years experience</li>
               <li>🌍 15 countries visited</li>
               <li>📸 Photography enthusiast</li>
             </ul>
@@ -200,7 +200,7 @@ export default function RightPanel({
           </div>
           <div className="bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg p-4 text-center">
             <p className="text-3xl font-heading font-bold text-primary mb-1">
-              5+
+              1+
             </p>
             <p className="text-xs text-muted-foreground">Years Experience</p>
           </div>

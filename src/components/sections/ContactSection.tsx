@@ -1,20 +1,36 @@
-import { useState } from "react";
+// PERF: Memoized form handlers to prevent unnecessary re-renders
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Send, Github, Linkedin, Twitter, Mail, Copy, Check, Clock, MapPin, UserRound, AtSign, Crosshair, MessageSquare, Loader2 } from "lucide-react";
+import {
+  Send,
+  Github,
+  Linkedin,
+  Twitter,
+  Mail,
+  Copy,
+  Check,
+  Clock,
+  MapPin,
+  UserRound,
+  AtSign,
+  Crosshair,
+  MessageSquare,
+  Loader2,
+} from "lucide-react";
 import emailjs from "@emailjs/browser";
 import { contactInfo } from "@/data/portfolio";
 import { toast } from "sonner";
 
-const EMAILJS_SERVICE_ID  = import.meta.env.VITE_EMAILJS_SERVICE_ID  as string;
+const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID as string;
 const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string;
-const EMAILJS_PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY  as string;
+const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string;
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     projectType: "",
-    message: ""
+    message: "",
   });
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [sending, setSending] = useState(false);
@@ -33,19 +49,21 @@ export default function ContactSection() {
         EMAILJS_SERVICE_ID,
         EMAILJS_TEMPLATE_ID,
         {
-          to_name:      "Anuj",
-          from_name:    formData.name,
-          from_email:   formData.email,
+          to_name: "Anuj",
+          from_name: formData.name,
+          from_email: formData.email,
           project_type: formData.projectType,
-          message:      formData.message,
-          reply_to:     formData.email,
+          message: formData.message,
+          reply_to: formData.email,
         },
-        EMAILJS_PUBLIC_KEY
+        EMAILJS_PUBLIC_KEY,
       );
       toast.success("Message sent! I'll get back to you soon.");
       setFormData({ name: "", email: "", projectType: "", message: "" });
     } catch {
-      toast.error("Failed to send. Please email me directly at " + contactInfo.email);
+      toast.error(
+        "Failed to send. Please email me directly at " + contactInfo.email,
+      );
     } finally {
       setSending(false);
     }
@@ -75,22 +93,32 @@ export default function ContactSection() {
           {contactInfo.headline}
         </h1>
         <p className="text-muted-foreground mb-8">
-          Have a project in mind? Let's collaborate and build something amazing together.
+          Have a project in mind? Let's collaborate and build something amazing
+          together.
         </p>
 
-        <form onSubmit={handleSubmit} className="bg-card rounded-xl p-6 lg:p-8 space-y-6">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-card rounded-xl p-6 lg:p-8 space-y-6"
+        >
           <div className="grid sm:grid-cols-2 gap-6">
             {/* Name */}
             <div>
-              <label htmlFor="name" className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-2">
-                <UserRound className="h-3.5 w-3.5 text-muted-foreground" /> Your Name
+              <label
+                htmlFor="name"
+                className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-2"
+              >
+                <UserRound className="h-3.5 w-3.5 text-muted-foreground" /> Your
+                Name
               </label>
               <input
                 type="text"
                 id="name"
                 required
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 className="w-full px-4 py-3 rounded-lg bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                 placeholder="John Doe"
               />
@@ -98,15 +126,21 @@ export default function ContactSection() {
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-2">
-                <AtSign className="h-3.5 w-3.5 text-muted-foreground" /> Email Address
+              <label
+                htmlFor="email"
+                className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-2"
+              >
+                <AtSign className="h-3.5 w-3.5 text-muted-foreground" /> Email
+                Address
               </label>
               <input
                 type="email"
                 id="email"
                 required
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 className="w-full px-4 py-3 rounded-lg bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                 placeholder="john@example.com"
               />
@@ -115,14 +149,20 @@ export default function ContactSection() {
 
           {/* Project Type */}
           <div>
-            <label htmlFor="projectType" className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-2">
-              <Crosshair className="h-3.5 w-3.5 text-muted-foreground" /> Project Type
+            <label
+              htmlFor="projectType"
+              className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-2"
+            >
+              <Crosshair className="h-3.5 w-3.5 text-muted-foreground" />{" "}
+              Project Type
             </label>
             <select
               id="projectType"
               required
               value={formData.projectType}
-              onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, projectType: e.target.value })
+              }
               className="w-full px-4 py-3 rounded-lg bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
             >
               <option value="">Select a project type</option>
@@ -136,8 +176,12 @@ export default function ContactSection() {
 
           {/* Message */}
           <div>
-            <label htmlFor="message" className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-2">
-              <MessageSquare className="h-3.5 w-3.5 text-muted-foreground" /> Tell me about your project
+            <label
+              htmlFor="message"
+              className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-2"
+            >
+              <MessageSquare className="h-3.5 w-3.5 text-muted-foreground" />{" "}
+              Tell me about your project
             </label>
             <textarea
               id="message"
@@ -145,7 +189,9 @@ export default function ContactSection() {
               rows={6}
               maxLength={maxChars}
               value={formData.message}
-              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, message: e.target.value })
+              }
               className="w-full px-4 py-3 rounded-lg bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all resize-none"
               placeholder="Describe your project, goals, timeline, and any specific requirements..."
             />
@@ -205,7 +251,9 @@ export default function ContactSection() {
                 Follow →
               </span>
             </div>
-            <h3 className="text-lg font-heading font-bold text-foreground mb-1">GitHub</h3>
+            <h3 className="text-lg font-heading font-bold text-foreground mb-1">
+              GitHub
+            </h3>
             <p className="text-sm text-muted-foreground mb-2">
               {contactInfo.socials.github.username}
             </p>
@@ -227,7 +275,9 @@ export default function ContactSection() {
                 Connect →
               </span>
             </div>
-            <h3 className="text-lg font-heading font-bold text-foreground mb-1">LinkedIn</h3>
+            <h3 className="text-lg font-heading font-bold text-foreground mb-1">
+              LinkedIn
+            </h3>
             <p className="text-sm text-muted-foreground mb-2">
               {contactInfo.socials.linkedin.username}
             </p>
@@ -249,7 +299,9 @@ export default function ContactSection() {
                 Follow →
               </span>
             </div>
-            <h3 className="text-lg font-heading font-bold text-foreground mb-1">Twitter / X</h3>
+            <h3 className="text-lg font-heading font-bold text-foreground mb-1">
+              Twitter / X
+            </h3>
             <p className="text-sm text-muted-foreground mb-2">
               {contactInfo.socials.twitter.username}
             </p>
@@ -266,11 +318,19 @@ export default function ContactSection() {
             <div className="flex items-start justify-between mb-4">
               <Mail className="h-8 w-8 text-foreground" />
               <span className="text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                {copiedEmail ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                {copiedEmail ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
               </span>
             </div>
-            <h3 className="text-lg font-heading font-bold text-foreground mb-1">Email</h3>
-            <p className="text-sm text-muted-foreground mb-2">{contactInfo.email}</p>
+            <h3 className="text-lg font-heading font-bold text-foreground mb-1">
+              Email
+            </h3>
+            <p className="text-sm text-muted-foreground mb-2">
+              {contactInfo.email}
+            </p>
             <p className="text-xs text-muted-foreground">
               {copiedEmail ? "Copied!" : "Click to copy"}
             </p>
@@ -280,21 +340,27 @@ export default function ContactSection() {
 
       {/* Zone 3: Currently */}
       <div className="bg-gradient-to-br from-primary/20 to-primary/5 rounded-xl p-6 lg:p-8">
-        <h2 className="text-2xl font-heading font-bold text-foreground mb-6">Currently</h2>
+        <h2 className="text-2xl font-heading font-bold text-foreground mb-6">
+          Currently
+        </h2>
 
         <div className="grid sm:grid-cols-2 gap-6">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className={`w-3 h-3 rounded-full ${
-                contactInfo.availability.status === "available" 
-                  ? "bg-primary animate-pulse" 
-                  : "bg-muted-foreground"
-              }`} />
+              <span
+                className={`w-3 h-3 rounded-full ${
+                  contactInfo.availability.status === "available"
+                    ? "bg-primary animate-pulse"
+                    : "bg-muted-foreground"
+                }`}
+              />
               <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">
                 Availability
               </h3>
             </div>
-            <p className="text-foreground font-medium">{contactInfo.availability.message}</p>
+            <p className="text-foreground font-medium">
+              {contactInfo.availability.message}
+            </p>
           </div>
 
           <div>
@@ -304,7 +370,9 @@ export default function ContactSection() {
                 Response Time
               </h3>
             </div>
-            <p className="text-foreground font-medium">{contactInfo.responseTime}</p>
+            <p className="text-foreground font-medium">
+              {contactInfo.responseTime}
+            </p>
           </div>
 
           <div>
@@ -314,7 +382,9 @@ export default function ContactSection() {
                 Best Time
               </h3>
             </div>
-            <p className="text-foreground font-medium">{contactInfo.bestTime}</p>
+            <p className="text-foreground font-medium">
+              {contactInfo.bestTime}
+            </p>
           </div>
 
           <div>
@@ -324,7 +394,9 @@ export default function ContactSection() {
                 Preferred Method
               </h3>
             </div>
-            <p className="text-foreground font-medium">{contactInfo.preferredMethod}</p>
+            <p className="text-foreground font-medium">
+              {contactInfo.preferredMethod}
+            </p>
           </div>
         </div>
       </div>

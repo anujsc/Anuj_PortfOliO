@@ -1,7 +1,9 @@
-import { useState, useMemo } from "react";
+// PERF: Memoized filtered projects and optimized image loading
+import { useState, useMemo, memo } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import ProjectCard from "@/components/ProjectCard";
+import LazyImage from "@/components/LazyImage";
 import { projects } from "@/data/portfolio";
 import type { Project } from "@/data/portfolio";
 
@@ -11,14 +13,16 @@ interface HomeSectionProps {
   greeting: string;
 }
 
-export default function HomeSection({
+function HomeSection({
   searchQuery,
   onSelectProject,
   greeting,
 }: HomeSectionProps) {
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const navigate = useNavigate();
-  const brickProjects = projects.slice(0, 8);
+
+  // PERF: Memoize brick projects to avoid recalculation
+  const brickProjects = useMemo(() => projects.slice(0, 8), []);
 
   const filteredProjects = useMemo(() => {
     let filtered = projects;
@@ -74,14 +78,17 @@ export default function HomeSection({
                 className="flex items-center gap-0 rounded-md bg-white/8 hover:bg-white/12 active:scale-95 transition-all overflow-hidden h-14 text-left"
                 aria-label={project.title}
               >
-                <img
+                {/* PERF: Use LazyImage with explicit dimensions to prevent CLS */}
+                <LazyImage
                   src={
                     project.images && project.images.length > 0
                       ? project.images[0]
                       : project.thumbnail
                   }
                   alt={project.title}
-                  className="w-14 h-14 object-cover shrink-0"
+                  className="w-14 h-14 shrink-0"
+                  width={56}
+                  height={56}
                 />
                 <span className="px-3 text-xs font-semibold text-foreground leading-tight line-clamp-2">
                   {project.title}
@@ -176,3 +183,6 @@ export default function HomeSection({
     </motion.div>
   );
 }
+
+// PERF: Memoize component to prevent unnecessary re-renders
+export default memo(HomeSection);

@@ -1,5 +1,6 @@
+// PERF: Memoized callbacks and optimized re-renders
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import TopNav from "@/components/TopNav";
 import LibrarySidebar from "@/components/LibrarySidebar";
 import RightPanel from "@/components/RightPanel";
@@ -43,9 +44,13 @@ export default function Layout() {
   const projectId = isProjectPage
     ? location.pathname.replace("/projects/", "")
     : null;
-  const currentRouteProject = projectId
-    ? (projects.find((p) => p.id === projectId) ?? null)
-    : null;
+
+  // PERF: Memoize current route project lookup
+  const currentRouteProject = useMemo(() => {
+    return projectId
+      ? (projects.find((p) => p.id === projectId) ?? null)
+      : null;
+  }, [projectId]);
 
   const activeSection = isProjectPage
     ? "home"

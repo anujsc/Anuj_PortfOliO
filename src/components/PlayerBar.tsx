@@ -8,11 +8,9 @@ import {
   UserRound,
   GraduationCap,
   AtSign,
-  Music,
 } from "lucide-react";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import type { Project } from "@/data/portfolio";
+import playback from "@/assets/play-button.png";
 
 interface PlayerBarProps {
   currentProject: Project | null;
@@ -42,11 +40,6 @@ export default function PlayerBar({
   isProjectView = false,
 }: PlayerBarProps) {
   const meta = sectionMeta[activeSection] ?? sectionMeta.home;
-  const [isSpotifyOpen, setIsSpotifyOpen] = useState(false);
-
-  const playlistId =
-    import.meta.env.VITE_SPOTIFY_PLAYLIST_ID || "6JhDS8XkTNYMjWVoyNMInS";
-  const embedUrl = `https://open.spotify.com/embed/playlist/${playlistId}?utm_source=generator&theme=0`;
 
   return (
     <footer className="fixed bottom-16 lg:bottom-0 left-0 right-0 h-[72px] bg-card/95 backdrop-blur-xl border-t border-border z-40 flex items-center px-4 gap-4">
@@ -97,7 +90,7 @@ export default function PlayerBar({
         )}
       </div>
 
-      {/* ── MOBILE: skip-back + Spotify + skip-forward ── */}
+      {/* ── MOBILE: skip-back + play + skip-forward ── */}
       <div className="flex lg:hidden items-center gap-5 shrink-0">
         <button
           onClick={onPrevious}
@@ -107,11 +100,10 @@ export default function PlayerBar({
           <SkipBack className="h-5 w-5" fill="currentColor" />
         </button>
         <button
-          onClick={() => setIsSpotifyOpen(true)}
-          className="w-10 h-10 rounded-full bg-primary text-primary-foreground hover:scale-110 active:scale-95 transition-all flex items-center justify-center glow-green-sm"
-          aria-label="Open Spotify Player"
+          className="w-10 h-10 rounded-full bg-primary text-primary-foreground hover:scale-110 active:scale-95 transition-all flex items-center justify-center"
+          aria-label="Play"
         >
-          <Music className="h-5 w-5" />
+          <img src={playback} alt="" />
         </button>
         <button
           onClick={onNext}
@@ -122,7 +114,7 @@ export default function PlayerBar({
         </button>
       </div>
 
-      {/* ── DESKTOP: skip-back + Spotify + skip-forward ── */}
+      {/* ── DESKTOP: skip-back + play + skip-forward ── */}
       <div className="hidden lg:flex items-center gap-5">
         <button
           onClick={onPrevious}
@@ -132,11 +124,10 @@ export default function PlayerBar({
           <SkipBack className="h-5 w-5" fill="currentColor" />
         </button>
         <button
-          onClick={() => setIsSpotifyOpen(true)}
-          className="w-12 h-12 rounded-full bg-primary text-primary-foreground hover:scale-110 active:scale-95 transition-all flex items-center justify-center glow-green"
-          aria-label="Open Spotify Player"
+          className="w-12 h-12 rounded-full bg-primary text-primary-foreground hover:scale-110 active:scale-95 transition-all flex items-center justify-center"
+          aria-label="Play"
         >
-          <Music className="h-6 w-6" />
+           <img src={playback} alt="" />
         </button>
         <button
           onClick={onNext}
@@ -172,78 +163,6 @@ export default function PlayerBar({
           </a>
         )}
       </div>
-
-      {/* Spotify Modal - All Screens */}
-      <AnimatePresence mode="wait">
-        {isSpotifyOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              onClick={() => setIsSpotifyOpen(false)}
-              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100]"
-            />
-
-            {/* Modal Content */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{
-                type: "spring",
-                damping: 30,
-                stiffness: 400,
-                mass: 0.8,
-              }}
-              className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-lg z-[101] bg-card rounded-2xl shadow-2xl overflow-hidden border border-white/10"
-            >
-              {/* Header */}
-              <div className="flex items-center justify-between p-4 border-b border-white/10 bg-card/95 backdrop-blur-xl">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
-                    <Music className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-foreground">
-                      Coding Vibes
-                    </h3>
-                    <p className="text-xs text-muted-foreground">
-                      My focus playlist
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setIsSpotifyOpen(false)}
-                  className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors"
-                  aria-label="Close"
-                >
-                  <span className="text-muted-foreground text-2xl leading-none">
-                    ×
-                  </span>
-                </button>
-              </div>
-
-              {/* Spotify Embed */}
-              <div className="p-4 bg-card">
-                <iframe
-                  style={{ borderRadius: "12px", border: "none" }}
-                  src={embedUrl}
-                  width="100%"
-                  height="380"
-                  allowFullScreen
-                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                  loading="lazy"
-                  title="Spotify Playlist"
-                  className="w-full"
-                />
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
     </footer>
   );
 }

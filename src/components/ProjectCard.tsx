@@ -1,6 +1,8 @@
+// PERF: Memoized component to prevent unnecessary re-renders
 import { motion } from "framer-motion";
 import { Play, ExternalLink, Github } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { memo } from "react";
 import type { Project } from "@/data/portfolio";
 import ProjectCarousel from "@/components/ProjectCarousel";
 
@@ -10,11 +12,7 @@ interface ProjectCardProps {
   onSelect?: (project: Project) => void;
 }
 
-export default function ProjectCard({
-  project,
-  index,
-  onSelect,
-}: ProjectCardProps) {
+function ProjectCard({ project, index, onSelect }: ProjectCardProps) {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -121,3 +119,6 @@ export default function ProjectCard({
     </motion.article>
   );
 }
+
+// PERF: Memoize component to prevent unnecessary re-renders
+export default memo(ProjectCard);

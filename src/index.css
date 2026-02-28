@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* PERF: Preload critical fonts with font-display: swap to eliminate FOIT */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-display: swap;
+}
+
 @layer base {
   :root {
     --background: 0 0% 4%;

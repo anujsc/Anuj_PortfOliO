@@ -1,3 +1,4 @@
+// PERF: Added route prefetching on hover for instant navigation
 import { Link } from "react-router-dom";
 import {
   LibraryBig,
@@ -6,6 +7,7 @@ import {
   GraduationCap,
   AtSign,
 } from "lucide-react";
+import { prefetchRoute } from "@/utils/routePrefetch";
 
 const iconMap: Record<string, React.FC<{ className?: string }>> = {
   star: LayoutGrid,
@@ -22,11 +24,20 @@ interface SidebarItemProps {
   href: string;
 }
 
-function SidebarItem({ title, iconKey, count, active, href }: SidebarItemProps) {
+function SidebarItem({
+  title,
+  iconKey,
+  count,
+  active,
+  href,
+}: SidebarItemProps) {
   const Icon = iconMap[iconKey] ?? LayoutGrid;
   return (
     <Link
       to={href}
+      // PERF: Prefetch route on hover/focus for instant navigation
+      onMouseEnter={() => prefetchRoute(href)}
+      onFocus={() => prefetchRoute(href)}
       className={`group flex w-full items-center gap-3 rounded-md px-3 py-3 text-sm transition-all duration-200 ${
         active
           ? "bg-white/10 text-foreground"
@@ -36,14 +47,22 @@ function SidebarItem({ title, iconKey, count, active, href }: SidebarItemProps) 
     >
       <span
         className={`flex items-center justify-center w-10 h-10 rounded-md shrink-0 transition-colors ${
-          active ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground group-hover:text-foreground"
+          active
+            ? "bg-primary/20 text-primary"
+            : "bg-muted text-muted-foreground group-hover:text-foreground"
         }`}
       >
         <Icon className="h-5 w-5" />
       </span>
       <div className="flex-1 text-left min-w-0">
-        <p className={`font-medium truncate ${active ? "text-foreground" : ""}`}>{title}</p>
-        <p className="text-xs text-muted-foreground mt-0.5">Playlist &middot; {count}</p>
+        <p
+          className={`font-medium truncate ${active ? "text-foreground" : ""}`}
+        >
+          {title}
+        </p>
+        <p className="text-xs text-muted-foreground mt-0.5">
+          Playlist &middot; {count}
+        </p>
       </div>
       {active && (
         <div className="flex items-end gap-[2px] ml-1 shrink-0">
@@ -59,11 +78,22 @@ function SidebarItem({ title, iconKey, count, active, href }: SidebarItemProps) 
 interface LibrarySidebarProps {
   activeSection: string;
   isProjectPage?: boolean;
-  items: { title: string; icon: string; count: number; filter: string; section: string }[];
+  items: {
+    title: string;
+    icon: string;
+    count: number;
+    filter: string;
+    section: string;
+  }[];
   sectionToPath: Record<string, string>;
 }
 
-export default function LibrarySidebar({ activeSection, isProjectPage, items, sectionToPath }: LibrarySidebarProps) {
+export default function LibrarySidebar({
+  activeSection,
+  isProjectPage,
+  items,
+  sectionToPath,
+}: LibrarySidebarProps) {
   return (
     <aside className="hidden lg:flex flex-col w-[240px] shrink-0 bg-background border-r border-border h-[calc(100vh-136px)] sticky top-16 overflow-y-auto">
       <div className="p-4">
@@ -88,7 +118,11 @@ export default function LibrarySidebar({ activeSection, isProjectPage, items, se
         </div>
 
         {/* Items */}
-        <nav className="flex flex-col gap-1" role="navigation" aria-label="Portfolio sections">
+        <nav
+          className="flex flex-col gap-1"
+          role="navigation"
+          aria-label="Portfolio sections"
+        >
           {items.map((item) => {
             const active = !isProjectPage && activeSection === item.section;
             return (
